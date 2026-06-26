@@ -1,22 +1,22 @@
-/*
- * A javascript-based implementation of Spatial Navigation.
+// @ts-nocheck
+/*!
+ * A TypeScript ES module implementation of Spatial Navigation.
  *
- * Copyright (c) 2022 Luke Chang.
+ * Original work Copyright (c) 2022 Luke Chang.
+ * Modifications Copyright (c) 2026 Brandon Bloom.
  * https://github.com/luke-chang/js-spatial-navigation
  *
- * Licensed under the MPL 2.0.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-;(function($) {
-  'use strict';
-
   /************************/
   /* Global Configuration */
   /************************/
   // Note: an <extSelector> can be one of following types:
-  // - a valid selector string for "querySelectorAll" or jQuery (if it exists)
+  // - a valid selector string for "querySelectorAll"
   // - a NodeList or an array containing DOM elements
   // - a single DOM element
-  // - a jQuery object
   // - a string "@<sectionId>" to indicate the specified section
   // - a string "@" to indicate the default section
   var GlobalConfig = {
@@ -452,9 +452,7 @@
     var result = [];
     try {
       if (selector) {
-        if ($) {
-          result = $(selector).get();
-        } else if (typeof selector === 'string') {
+        if (typeof selector === 'string') {
           result = [].slice.call(document.querySelectorAll(selector));
         } else if (typeof selector === 'object' && selector.length) {
           result = [].slice.call(selector);
@@ -469,9 +467,7 @@
   }
 
   function matchSelector(elem, selector) {
-    if ($) {
-      return $(elem).is(selector);
-    } else if (typeof selector === 'string') {
+    if (typeof selector === 'string') {
       return elementMatchesSelector.call(elem, selector);
     } else if (typeof selector === 'object' && selector.length) {
       return selector.indexOf(elem) >= 0;
@@ -731,10 +727,6 @@
           return null;
         }
         return focusExtendedSelector(next, direction);
-      }
-
-      if ($ && next instanceof $) {
-        next = next.get(0);
       }
 
       var nextSectionId = getSectionId(next);
@@ -1120,10 +1112,6 @@
             result = focusExtendedSelector(elem);
           }
         } else {
-          if ($ && elem instanceof $) {
-            elem = elem.get(0);
-          }
-
           var nextSectionId = getSectionId(elem);
           if (isNavigable(elem, nextSectionId)) {
             result = focusElement(elem, nextSectionId);
@@ -1209,56 +1197,59 @@
     }
   };
 
-  window.SpatialNavigation = SpatialNavigation;
+const spatialNavigation = SpatialNavigation as SpatialNavigationApi;
 
-  /**********************/
-  /* CommonJS Interface */
-  /**********************/
-  if (typeof module === 'object') {
-      module.exports = SpatialNavigation;
-  }
+export { spatialNavigation as SpatialNavigation };
+export default spatialNavigation;
 
-  /********************/
-  /* jQuery Interface */
-  /********************/
-  if ($) {
-    $.SpatialNavigation = function() {
-      SpatialNavigation.init();
+export type Direction = 'left' | 'right' | 'up' | 'down';
+export type EnterTo = '' | 'last-focused' | 'default-element';
+export type Restrict = 'self-first' | 'self-only' | 'none';
 
-      if (arguments.length > 0) {
-        if ($.isPlainObject(arguments[0])) {
-          return SpatialNavigation.add(arguments[0]);
-        } else if ($.type(arguments[0]) === 'string' &&
-                   $.isFunction(SpatialNavigation[arguments[0]])) {
-          return SpatialNavigation[arguments[0]]
-            .apply(SpatialNavigation, [].slice.call(arguments, 1));
-        }
-      }
+export type ExtendedSelector =
+  | string
+  | Element
+  | NodeListOf<Element>
+  | Element[];
 
-      return $.extend({}, SpatialNavigation);
-    };
+export interface LeaveFor {
+  left?: ExtendedSelector;
+  right?: ExtendedSelector;
+  up?: ExtendedSelector;
+  down?: ExtendedSelector;
+}
 
-    $.fn.SpatialNavigation = function() {
-      var config;
+export interface SpatialNavigationConfig {
+  id?: string;
+  selector?: ExtendedSelector;
+  straightOnly?: boolean;
+  straightOverlapThreshold?: number;
+  rememberSource?: boolean;
+  disabled?: boolean;
+  defaultElement?: ExtendedSelector;
+  enterTo?: EnterTo;
+  leaveFor?: LeaveFor | null;
+  restrict?: Restrict;
+  tabIndexIgnoreList?: ExtendedSelector;
+  navigableFilter?: ((element: Element, sectionId: string) => boolean) | null;
+}
 
-      if ($.isPlainObject(arguments[0])) {
-        config = arguments[0];
-      } else {
-        config = {
-          id: arguments[0]
-        };
-      }
-
-      config.selector = this;
-
-      SpatialNavigation.init();
-      if (config.id) {
-        SpatialNavigation.remove(config.id);
-      }
-      SpatialNavigation.add(config);
-      SpatialNavigation.makeFocusable(config.id);
-
-      return this;
-    };
-  }
-})(window.jQuery);
+export interface SpatialNavigationApi {
+  init(): void;
+  uninit(): void;
+  clear(): void;
+  set(config: SpatialNavigationConfig): void;
+  set(sectionId: string, config: SpatialNavigationConfig): void;
+  add(config: SpatialNavigationConfig): string;
+  add(sectionId: string, config: SpatialNavigationConfig): string;
+  remove(sectionId: string): boolean;
+  disable(sectionId: string): boolean;
+  enable(sectionId: string): boolean;
+  pause(): void;
+  resume(): void;
+  focus(silent?: boolean): boolean;
+  focus(selector: ExtendedSelector, silent?: boolean): boolean;
+  move(direction: Direction, selector?: ExtendedSelector): boolean;
+  makeFocusable(sectionId?: string): void;
+  setDefaultSection(sectionId?: string): void;
+}

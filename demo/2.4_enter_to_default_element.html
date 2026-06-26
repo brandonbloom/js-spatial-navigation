@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="css/style_2.css">
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="../spatial_navigation.js"></script>
     <script src="js/util.js"></script>
-    <script>
+    <script type="module">
+      import SpatialNavigation from '../dist/spatial_navigation.js';
       $(function() {
         var SN = SpatialNavigation;
 
@@ -28,9 +28,8 @@
           // Specify the default element.
           // It will be focused as well when calling "focus(<sectionId>)" method
           // even if "enterTo" is not set to "default-element". The valid value
-          // can be a jQuery selector string, jQuery object or standard DOM
-          // element.
-          defaultElement: '.leftbox .focusable:first'
+          // can be a selector string or standard DOM element.
+          defaultElement: '.leftbox .focusable'
         });
 
         SN.add({

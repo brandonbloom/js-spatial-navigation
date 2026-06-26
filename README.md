@@ -1,88 +1,77 @@
-JavaScript SpatialNavigation
-============================
+# JavaScript SpatialNavigation
 
-A javascript-based implementation of Spatial Navigation.
+A module for keyboard spatial navigation in browser UIs.
 
-* [Examples](#examples)
-* [Documentation](#documentation)
-  + [API Reference](#api-reference)
-  + [Configuration](#configuration)
-  + [Custom Attributes](#custom-attributes)
-  + [Selector](#selector-1)
-  + [Events](#events)
-* [Browser Support](#browser-support)
-* [License](#license)
+This repository repackages [luke-chang/js-spatial-navigation](https://github.com/luke-chang/js-spatial-navigation) as ES Module with TypeScript types.
 
-Examples
---------
+- [Examples](#examples)
+- [Documentation](#documentation)
+  - [API Reference](#api-reference)
+  - [Configuration](#configuration)
+  - [Custom Attributes](#custom-attributes)
+  - [Selector](#selector-1)
+  - [Events](#events)
+- [Browser Support](#browser-support)
+- [License](#license)
+
+## Examples
+
+### Install
+
+```sh
+npm install @bbloom/js-spatial-navigation
+```
 
 ### Basic usage
 
-```html
-<head>
-  <script src="https://luke-chang.github.io/js-spatial-navigation/spatial_navigation.js"></script>
-  <script>
-    window.addEventListener('load', function() {
-      // Initialize
-      SpatialNavigation.init();
+```js
+import SpatialNavigation from "@bbloom/js-spatial-navigation";
 
-      // Define navigable elements (anchors and elements with "focusable" class).
-      SpatialNavigation.add({
-        selector: 'a, .focusable'
-      });
+window.addEventListener("load", function () {
+  // Initialize
+  SpatialNavigation.init();
 
-      // Make the *currently existing* navigable elements focusable.
-      SpatialNavigation.makeFocusable();
-
-      // Focus the first navigable element.
-      SpatialNavigation.focus();
-    });
-  </script>
-  <style>
-    /* Add style to the focused elements */
-    :focus {
-      outline: 2px solid red;
-    }
-  </style>
-</head>
-<body>
-  <a href="#">Link 1</a>
-  <a href="#">Link 2</a>
-  <div class="focusable">Div 1</div>
-  <div class="focusable">Div 2</div>
-</body>
-```
-
-### Integrate jQuery
-
-Although SpatialNavigation is a standalone (pure-javascript-based) library, it can work perfectly with jQuery.
-
-```html
-<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
-<script>
-  $.getScript('https://luke-chang.github.io/js-spatial-navigation/spatial_navigation.js', function() {
-    $('a, .focusable')
-      .SpatialNavigation()
-      .focus(function() { $(this).css('outline', '2px solid red'); })
-      .blur(function() { $(this).css('outline', ''); })
-      .first()
-      .focus();
+  // Define navigable elements (anchors and elements with "focusable" class).
+  SpatialNavigation.add({
+    selector: "a, .focusable",
   });
-</script>
+
+  // Make the *currently existing* navigable elements focusable.
+  SpatialNavigation.makeFocusable();
+
+  // Focus the first navigable element.
+  SpatialNavigation.focus();
+});
 ```
+
+The singleton is also available as a named export:
+
+```js
+import { SpatialNavigation } from "@bbloom/js-spatial-navigation";
+```
+
+### Development
+
+```sh
+npm install
+npm run build
+npm run demo
+```
+
+The build emits ESM JavaScript and TypeScript declarations into `dist/`.
 
 ### More Demonstrations
 
-+ [Demonstrations](https://luke-chang.github.io/js-spatial-navigation/demo/)
+The demo pages import `../dist/spatial_navigation.js`. Run `npm run demo` to
+build the library and serve the demo index.
 
-Documentation
--------------
+## Documentation
 
 ### API Reference
 
 #### `SpatialNavigation.init()`
 
-Initializes SpatialNavigation and binds event listeners to the global object. It is a synchronous function, so you don't need to await ready state. Calling `init()` more than once is possible since SpatialNavigation internally prevents it from reiterating the initialization.
+Initializes SpatialNavigation and binds event listeners to `window`. It is a synchronous function, so you don't need to await ready state. Calling `init()` more than once is possible since SpatialNavigation internally prevents it from reiterating the initialization.
 
 **Note:** It should be called before using any other methods of SpatialNavigation!
 
@@ -96,8 +85,8 @@ Resets the variable state without unbinding the event listeners.
 
 #### `SpatialNavigation.add([sectionId], config)`
 
-  + `sectionId`: (optional) String
-  + `config`: [Configuration](#configuration)
+- `sectionId`: (optional) String
+- `config`: [Configuration](#configuration)
 
 Adds a section to SpatialNavigation with its own configuration. The `config` doesn't have to contain all the properties. Those omitted will inherit global ones automatically.
 
@@ -107,14 +96,14 @@ Giving a `sectionId` to a section enables you to refer to it in other methods bu
 
 #### `SpatialNavigation.remove(sectionId)`
 
-  + `sectionId`: String
+- `sectionId`: String
 
 Removes the section with the specified `sectionId` from SpatialNavigation. Elements defined in this section will not be navigated anymore.
 
 #### `SpatialNavigation.set([sectionId], config)`
 
-  + `sectionId`: (optional) String
-  + `config`: [Configuration](#configuration)
+- `sectionId`: (optional) String
+- `config`: [Configuration](#configuration)
 
 Updates the `config` of the section with the specified `sectionId`. If `sectionId` is omitted, the global configuration will be updated.
 
@@ -122,13 +111,13 @@ Omitted properties in `config` will not affect the original one, which was set b
 
 #### `SpatialNavigation.disable(sectionId)`
 
-  + `sectionId`: String
+- `sectionId`: String
 
 Disables the section with the specified `sectionId` temporarily. Elements defined in this section will become unnavigable until [`enable()`](#spatialnavigationenablesectionid) is called.
 
 #### `SpatialNavigation.enable(sectionId)`
 
-  + `sectionId`: String
+- `sectionId`: String
 
 Enables the section with the specified `sectionId`. Elements defined in this section, on which if [`disable()`](#spatialnavigationdisablesectionid) was called earlier, will become navigable again.
 
@@ -142,8 +131,8 @@ Resumes SpatialNavigation, so it can react to key events and trigger events whic
 
 #### `SpatialNavigation.focus([sectionId/selector], [silent])`
 
-  + `sectionId/selector`: (optional) String / [Selector](#selector-1) (without @ syntax)
-  + `silent`: (optional) Boolean
+- `sectionId/selector`: (optional) String / [Selector](#selector-1) (without @ syntax)
+- `silent`: (optional) Boolean
 
 Focuses the section with the specified `sectionId` or the first element that matches `selector`.
 
@@ -153,14 +142,14 @@ Setting `silent` to `true` lets you focus an element without triggering any cust
 
 #### `SpatialNavigation.move(direction, [selector])`
 
-  + `direction`: `'left'`, `'right'`, `'up'` or `'down'`
-  + `selector`: (optional) [Selector](#selector-1) (without @ syntax)
+- `direction`: `'left'`, `'right'`, `'up'` or `'down'`
+- `selector`: (optional) [Selector](#selector-1) (without @ syntax)
 
 Moves the focus to the given `direction` based on the rule of SpatialNavigation. The first element matching `selector` is regarded as the origin. If `selector` is omitted, SpatialNavigation will move the focus based on the currently focused element.
 
 #### `SpatialNavigation.makeFocusable([sectionId])`
 
-  + `sectionId`: (optional) String
+- `sectionId`: (optional) String
 
 A helper to add `tabindex="-1"` to elements defined in the specified section to make them focusable. If `sectionId` is omitted, it applies to all sections.
 
@@ -168,7 +157,7 @@ A helper to add `tabindex="-1"` to elements defined in the specified section to 
 
 #### `SpatialNavigation.setDefaultSection([sectionId])`
 
-  + `sectionId`: (optional) String
+- `sectionId`: (optional) String
 
 Assigns the specified section to be the default section. It will be used as a substitution in certain methods, of which if `sectionId` is omitted.
 
@@ -200,22 +189,22 @@ Following is an example with default values.
 
 #### `selector`
 
-  + Type: [Selector](#selector-1)
-  + Default: `''`
+- Type: [Selector](#selector-1)
+- Default: `''`
 
 Elements matching `selector` are regarded as navigable elements in SpatialNavigation. However, hidden or disabled elements are ignored as they can not be focused in any way.
 
 #### `straightOnly`
 
-  + Type: Boolean
-  + Default: `false`
+- Type: Boolean
+- Default: `false`
 
 When it is `true`, only elements in the straight (vertical or horizontal) direction will be navigated. i.e. SpatialNavigation ignores elements in the oblique directions.
 
 #### `straightOverlapThreshold`
 
-  + Type: Number in the range [0, 1]
-  + Default: `0.5`
+- Type: Number in the range [0, 1]
+- Default: `0.5`
 
 This threshold is used to determine whether an element is considered in the straight (vertical or horizontal) directions. Valid number is between 0 to 1.0.
 
@@ -223,29 +212,29 @@ Setting it to 0.3 means that an element is counted in the straight directions on
 
 #### `rememberSource`
 
-  + Type: Boolean
-  + Default: `false`
+- Type: Boolean
+- Default: `false`
 
 When it is `true`, the previously focused element will have higher priority to be chosen as the next candidate.
 
 #### `disabled`
 
-  + Type: Boolean
-  + Default: `false`
+- Type: Boolean
+- Default: `false`
 
 When it is `true`, elements defined in this section are unnavigable. This property is modified by [`disable()`](#spatialnavigationdisablesectionid) and [`enable()`](#spatialnavigationenablesectionid) as well.
 
 #### `defaultElement`
 
-  + Type: [Selector](#selector-1) (without @ syntax)
-  + Default: `''`
+- Type: [Selector](#selector-1) (without @ syntax)
+- Default: `''`
 
 When a section is specified to be the next focused target, e.g. [`focus('some-section-id')`](#spatialnavigationfocussectionidselector-silent) is called, the first navigable element matching `defaultElement` within this section will be chosen first.
 
 #### `enterTo`
 
-  + Type: `''`, `'last-focused'` or `'default-element'`
-  + Default: `''`
+- Type: `''`, `'last-focused'` or `'default-element'`
+- Default: `''`
 
 If the focus comes from another section, you can define which element in this section should be focused first.
 
@@ -257,8 +246,8 @@ If the focus comes from another section, you can define which element in this se
 
 #### `leaveFor`
 
-  + Type: `null` or PlainObject
-  + Default: `null`
+- Type: `null` or PlainObject
+- Default: `null`
 
 This property specifies which element should be focused next when a user presses the corresponding arrow key and intends to leave the current section.
 
@@ -268,8 +257,8 @@ It should be a PlainObject consists of four properties: `'left'`, `'right'`, `'u
 
 #### `restrict`
 
-  + Type: `'self-first'`, `'self-only'` or `'none'`
-  + Default: `'self-first'`
+- Type: `'self-first'`, `'self-only'` or `'none'`
+- Default: `'self-first'`
 
 `'self-first'` implies that elements within the same section will have higher priority to be chosen as the next candidate.
 
@@ -279,15 +268,15 @@ It should be a PlainObject consists of four properties: `'left'`, `'right'`, `'u
 
 #### `tabIndexIgnoreList`
 
-  + Type: String
-  + Default: `'a, input, select, textarea, button, iframe, [contentEditable=true]'`
+- Type: String
+- Default: `'a, input, select, textarea, button, iframe, [contentEditable=true]'`
 
 Elements matching `tabIndexIgnoreList` will never be affected by [`makeFocusable()`](#spatialnavigationmakefocusablesectionid). It is usually used to ignore elements that are already focusable.
 
 #### `navigableFilter`
 
-  + Type: `'null'` or `function(HTMLElement)`
-  + Default: `null`
+- Type: `'null'` or `function(HTMLElement)`
+- Default: `null`
 
 A callback function that accepts a DOM element as the first argument.
 
@@ -297,10 +286,10 @@ SpatialNavigation calls this function every time when it tries to traverse every
 
 SpatialNavigation supports HTML `data-*` attributes as follows:
 
-  + `data-sn-left`
-  + `data-sn-right`
-  + `data-sn-up`
-  + `data-sn-down`
+- `data-sn-left`
+- `data-sn-right`
+- `data-sn-up`
+- `data-sn-down`
 
 They specifies which element should be focused next when a user presses the corresponding arrow key. This setting overrides any other settings in [`enterTo`](#enterto) and [`leaveFor`](#leavefor).
 
@@ -312,12 +301,11 @@ The value of each attribute should be a [Selector](#selector-1) and only accepts
 
 The type "Selector" can be any of the following types.
 
-* a valid selector string for "querySelectorAll" or jQuery (if it exists)
-* a [NodeList](https://developer.mozilla.org/en-US/docs/Web/API/NodeList) or an array containing DOM elements
-* a single DOM element
-* a jQuery object
-* a string `'@<sectionId>'` to indicate the specified section (e.g. `'@test-section'` indicates the section whose id is `test-section`.
-* a string `'@'` to indicate the default section
+- a valid selector string for `querySelectorAll`
+- a [NodeList](https://developer.mozilla.org/en-US/docs/Web/API/NodeList) or an array containing DOM elements
+- a single DOM element
+- a string `'@<sectionId>'` to indicate the specified section (e.g. `'@test-section'` indicates the section whose id is `test-section`.
+- a string `'@'` to indicate the default section
 
 **Note:** Certain methods do not accept the `@` syntax (including both `@` and `@<sectionId>`).
 
@@ -327,13 +315,13 @@ Following custom events are triggered by SpatialNavigation. You can bind them by
 
 Focus-related events are also wrappers of the native `focus`/`blur` events, so they are triggered as well even SpatialNavigation is not involved. In this case, some properties in `event.detail` may be omitted. This kind of properties is marked **"Navigation Only"** below.
 
-**Note:** If you bind events via jQuery's [`.on()`](http://api.jquery.com/on/) API, you must change to `event.originalEvent.detail` to access the `detail` objects.
+**Note:** If you bind events through a framework or DOM helper that wraps native events, access `detail` through the wrapped native event object.
 
 #### `sn:willmove`
 
-+ bubbles: `true`
-+ cancelable: `true`
-+ detail:
+- bubbles: `true`
+- cancelable: `true`
+- detail:
   - cause: `'keydown'` or `'api'`
   - sectionId: `<String>`
   - direction: `'left'`, `'right'`, `'up'` or `'down'`
@@ -348,13 +336,13 @@ Fired when SpatialNavigation is about to move the focus.
 
 #### `sn:willunfocus`
 
-  + bubbles: `true`
-  + cancelable: `true`
-  + detail:
-    - nextElement: `<HTMLElement>` (Navigation Only)
-    - nextSectionId: `<String>` (Navigation Only)
-    - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
-    - native: `<Boolean>`
+- bubbles: `true`
+- cancelable: `true`
+- detail:
+  - nextElement: `<HTMLElement>` (Navigation Only)
+  - nextSectionId: `<String>` (Navigation Only)
+  - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
+  - native: `<Boolean>`
 
 Fired when an element is about to lose the focus.
 
@@ -368,13 +356,13 @@ Fired when an element is about to lose the focus.
 
 #### `sn:unfocused`
 
-  + bubbles: `true`
-  + cancelable: `false`
-  + detail:
-    - nextElement: `<HTMLElement>` (Navigation Only)
-    - nextSectionId: `<String>` (Navigation Only)
-    - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
-    - native: `<Boolean>`
+- bubbles: `true`
+- cancelable: `false`
+- detail:
+  - nextElement: `<HTMLElement>` (Navigation Only)
+  - nextSectionId: `<String>` (Navigation Only)
+  - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
+  - native: `<Boolean>`
 
 Fired when an element just lost the focus.
 
@@ -382,13 +370,13 @@ Event details are the same as [`sn:willunfocus`](#snwillunfocus).
 
 #### `sn:willfocus`
 
-  + bubbles: `true`
-  + cancelable: `true`
-  + detail:
-    - sectionId: `<String>`
-    - previousElement: `<HTMLElement>` (Navigation Only)
-    - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
-    - native: `<Boolean>`
+- bubbles: `true`
+- cancelable: `true`
+- detail:
+  - sectionId: `<String>`
+  - previousElement: `<HTMLElement>` (Navigation Only)
+  - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
+  - native: `<Boolean>`
 
 Fired when an element is about to get the focus.
 
@@ -402,13 +390,13 @@ Fired when an element is about to get the focus.
 
 #### `sn:focused`
 
-  + bubbles: `true`
-  + cancelable: `false`
-  + detail:
-    - sectionId: `<String>`
-    - previousElement: `<HTMLElement>` (Navigation Only)
-    - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
-    - native: `<Boolean>`
+- bubbles: `true`
+- cancelable: `false`
+- detail:
+  - sectionId: `<String>`
+  - previousElement: `<HTMLElement>` (Navigation Only)
+  - direction: `'left'`, `'right'`, `'up'` or `'down'` (Navigation Only)
+  - native: `<Boolean>`
 
 Fired when an element just got the focus.
 
@@ -416,9 +404,9 @@ Event details are the same as [`sn:willfocus`](#snwillfocus).
 
 #### `sn:navigatefailed`
 
-  + bubbles: `true`
-  + cancelable: `false`
-    - direction: `'left'`, `'right'`, `'up'` or `'down'`
+- bubbles: `true`
+- cancelable: `false`
+  - direction: `'left'`, `'right'`, `'up'` or `'down'`
 
 Fired when SpatialNavigation fails to find the next element to be focused.
 
@@ -426,24 +414,25 @@ Fired when SpatialNavigation fails to find the next element to be focused.
 
 #### `sn:enter-down`
 
-  + bubbles: `true`
-  + cancelable: `true`
+- bubbles: `true`
+- cancelable: `true`
 
 Fired when ENTER key is pressed down.
 
 #### `sn:enter-up`
 
-  + bubbles: `true`
-  + cancelable: `true`
+- bubbles: `true`
+- cancelable: `true`
 
 Fired when ENTER key is released.
 
-Browser Support
----------------
+## Browser Support
 
-Chrome 5, Firefox 12, IE 9, Opera 11.5, Safari 5
+Modern browsers with ES module support.
 
-License
--------
+## License
 
-Copyright (c) 2022 Luke Chang. Licensed under the MPL 2.0.
+Original work Copyright (c) 2022 Luke Chang.
+Modifications Copyright (c) 2026 Brandon Bloom.
+
+Licensed under the Mozilla Public License 2.0.

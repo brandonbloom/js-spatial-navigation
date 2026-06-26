@@ -1,0 +1,34 @@
+{
+  "name": "@bbloom/js-spatial-navigation",
+  "version": "0.1.0",
+  "description": "A javascript-based implementation of Spatial Navigation.",
+  "license": "MPL-2.0",
+  "type": "module",
+  "main": "./dist/spatial_navigation.js",
+  "module": "./dist/spatial_navigation.js",
+  "types": "./dist/spatial_navigation.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/spatial_navigation.d.ts",
+      "import": "./dist/spatial_navigation.js"
+    }
+  },
+  "files": [
+    "dist",
+    "spatial_navigation.ts",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsgo -p tsconfig.json",
+    "demo": "npm run build && node scripts/demo-server.mjs",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@typescript/native-preview": "7.0.0-dev.20260624.1"
+  }
+}

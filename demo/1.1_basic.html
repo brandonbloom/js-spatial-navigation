@@ -7,8 +7,8 @@
 
     <link rel="stylesheet" href="css/style_1.css">
 
-    <script src="../spatial_navigation.js"></script>
-    <script>
+    <script type="module">
+      import SpatialNavigation from '../dist/spatial_navigation.js';
       window.addEventListener('load', function() {
         // Initialize
         SpatialNavigation.init();

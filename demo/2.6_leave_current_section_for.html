@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="css/style_2.css">
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="../spatial_navigation.js"></script>
     <script src="js/util.js"></script>
-    <script>
+    <script type="module">
+      import SpatialNavigation from '../dist/spatial_navigation.js';
       $(function() {
         var SN = SpatialNavigation;
 
@@ -24,9 +24,9 @@
           // press the specified key and intends to leave the current section.
           //
           // It should be an object contains "left", "right", "up" and "down"
-          // properties. The valid value of each property can be a jQuery
-          // selector string, jQuery object or standard DOM element. Also, you
-          // can use "@{sectionId}" to specify another section. Any of these
+          // properties. The valid value of each property can be a selector
+          // string or standard DOM element. Also, you can use "@{sectionId}"
+          // to specify another section. Any of these
           // properties can be omitted and SpatialNavigation will follow the
           // original rule to navigate. However, if you assign an empty string,
           // it makes SpatialNavigation go nowhere at that direction.

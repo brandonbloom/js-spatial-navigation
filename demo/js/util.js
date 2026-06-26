@@ -21,10 +21,10 @@
     if (newPosition) {
       $parent.animate(newPosition, {
         duration: 200,
-        done: callback.bind(this)
+        done: callback.bind($this.get(0))
       });
     } else {
-      setTimeout(callback.bind(this));
+      setTimeout(callback.bind($this.get(0)));
     }
 
     return this;
